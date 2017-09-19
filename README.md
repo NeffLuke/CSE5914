@@ -12,4 +12,4 @@ Username: a475cc56-93c6-4b1c-9cc5-f76d8af50830
 Password: rFlhaBf2aEtS
 
 CHECK STATUS:
-curl -u "a475cc56-93c6-4b1c-9cc5-f76d8af50830":"rFlhaBf2aEtS"  "6a2a04x217-nlc-28653"
+curl -u "a475cc56-93c6-4b1c-9cc5-f76d8af50830":"rFlhaBf2aEtS"  "https://gateway.watsonplatform.net/natural-language-classifier/api/6a2a04x217-nlc-28653"
