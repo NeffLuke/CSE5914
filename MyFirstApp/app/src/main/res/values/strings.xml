@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name" translatable="false">My First App</string>
+    <string name="Button" translatable="false">Send_A_Trigger</string>
+</resources>
