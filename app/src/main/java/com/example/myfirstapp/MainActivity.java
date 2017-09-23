@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        EditText inputValue = (EditText) findViewById(R.id.editText);
     }
 
     /** Called when the user taps the send button */
@@ -43,10 +44,13 @@ public class MainActivity extends AppCompatActivity {
 
         final NaturalLanguageClassifier service = new NaturalLanguageClassifier();
         service.setUsernameAndPassword("a475cc56-93c6-4b1c-9cc5-f76d8af50830","rFlhaBf2aEtS");
+        EditText inputValue = (EditText) findViewById(R.id.editText);
+        String inputValue_string = inputValue.getText().toString();
+        final ServiceCall<Classification> classification = service.classify("6a2a04x217-nlc-28653", inputValue_string);
 
-        final ServiceCall<Classification> classification = service.classify("6a2a04x217-nlc-28653", "william");
 
-        String str;
+
+
 
         new Thread() {
             @Override
