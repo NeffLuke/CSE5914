@@ -5,6 +5,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class DisplayText extends AppCompatActivity {
 
     @Override
@@ -13,9 +23,13 @@ public class DisplayText extends AppCompatActivity {
         setContentView(R.layout.activity_display_text);
 
         Intent intent = getIntent();
-        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        String message = intent.getStringExtra(MainActivity.MESSAGE_ID);
+        String action = intent.getStringExtra(MainActivity.ACTION_ID);
+        String key = intent.getStringExtra(MainActivity.KET_ID);
 
         showText(message);
+        send2IFTTT(action, key, message);
+
     }
 
     public void showText(String str) {
@@ -24,5 +38,34 @@ public class DisplayText extends AppCompatActivity {
 
         classifier.setText(str);
 
+    }
+
+    public void send2IFTTT(String action, String key, String msg) {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://maker.ifttt.com/trigger/" + action + "/with/key/" + key;
+        final JSONObject data = new JSONObject();
+        try {
+            data.put("value1", msg);
+            data.put("value2", "");
+            data.put("value3", "");
+        } catch (JSONException e) {
+            System.err.println(e.getMessage());
+        }
+
+        JsonObjectRequest stringRequest = new JsonObjectRequest(
+                Request.Method.POST, url, data,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                }
+        );
+
+        queue.add(stringRequest);
     }
 }
