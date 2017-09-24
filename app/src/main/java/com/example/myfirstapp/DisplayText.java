@@ -24,11 +24,10 @@ public class DisplayText extends AppCompatActivity {
 
         Intent intent = getIntent();
         String message = intent.getStringExtra(MainActivity.MESSAGE_ID);
-        String action = intent.getStringExtra(MainActivity.ACTION_ID);
         String key = intent.getStringExtra(MainActivity.KET_ID);
 
         showText(message);
-        send2IFTTT(action, key, message);
+        send2IFTTT(key, message);
 
     }
 
@@ -40,9 +39,9 @@ public class DisplayText extends AppCompatActivity {
 
     }
 
-    public void send2IFTTT(String action, String key, String msg) {
+    public void send2IFTTT(String key, String msg) {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://maker.ifttt.com/trigger/" + action + "/with/key/" + key;
+        String url = "https://maker.ifttt.com/trigger/turn_" + msg + "_test/with/key/" + key;
         final JSONObject data = new JSONObject();
         try {
             data.put("value1", msg);

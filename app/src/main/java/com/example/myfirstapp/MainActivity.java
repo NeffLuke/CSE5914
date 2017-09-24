@@ -13,7 +13,6 @@ import com.ibm.watson.developer_cloud.natural_language_classifier.v1.model.Class
 public class MainActivity extends AppCompatActivity {
 
     public static final String MESSAGE_ID = "com.example.myfirstapp.MESSAGE";
-    public static final String ACTION_ID = "com.example.myfirstapp.ACTION";
     public static final String KET_ID = "com.example.myfirstapp.KEY";
     public EditText commandText;
     public EditText actionText;
@@ -24,7 +23,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         commandText = (EditText) findViewById(R.id.commandField);
-        actionText = (EditText) findViewById(R.id.actionField);
         keyText = (EditText) findViewById(R.id.keyField);
     }
 
@@ -36,15 +34,13 @@ public class MainActivity extends AppCompatActivity {
         service.setUsernameAndPassword("a475cc56-93c6-4b1c-9cc5-f76d8af50830", "rFlhaBf2aEtS");
         String inputString = commandText.getText().toString();
         final ServiceCall<Classification> classification = service.classify("6a2a04x217-nlc-28653", inputString);
-        final String action = actionText.getText().toString();
         final String key = keyText.getText().toString();
 
         new Thread() {
             @Override
             public void run() {
-                String msg = classification.execute().getClasses().get(0).toString();
+                String msg = classification.execute().getClasses().get(0).getName();
                 intent.putExtra(MESSAGE_ID, msg);
-                intent.putExtra(ACTION_ID, action);
                 intent.putExtra(KET_ID, key);
                 startActivity(intent);
             }
