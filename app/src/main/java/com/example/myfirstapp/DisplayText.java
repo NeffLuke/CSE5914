@@ -41,7 +41,9 @@ public class DisplayText extends AppCompatActivity {
 
     public void send2IFTTT(String key, String msg) {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://maker.ifttt.com/trigger/turn_" + msg + "_test/with/key/" + key;
+        String action = "turn_" + msg + "_test";
+        String action1 = "slack_test";
+        String url = "https://maker.ifttt.com/trigger/" + action + "/with/key/" + key;
         final JSONObject data = new JSONObject();
         try {
             data.put("value1", msg);
