@@ -13,7 +13,6 @@ import com.ibm.watson.developer_cloud.natural_language_classifier.v1.model.Class
 public class MainActivity extends AppCompatActivity {
 
     public static final String MESSAGE_ID = "com.example.myfirstapp.MESSAGE";
-    public static final String KET_ID = "com.example.myfirstapp.KEY";
     public EditText commandText;
     public EditText actionText;
     public EditText keyText;
@@ -41,11 +40,17 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 String msg = classification.execute().getClasses().get(0).getName();
                 intent.putExtra(MESSAGE_ID, msg);
-                intent.putExtra(KET_ID, key);
                 startActivity(intent);
             }
         }.start();
     }
 
+    public void nestLogin(View view) {
+        startActivity(new Intent(this, NestLogin.class));
+    }
+
+    public void iftttLogin(View view) {
+        startActivity(new Intent(this, IFTTTLogin.class));
+    }
 }
 

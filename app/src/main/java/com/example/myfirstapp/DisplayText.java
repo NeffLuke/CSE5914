@@ -24,10 +24,10 @@ public class DisplayText extends AppCompatActivity {
 
         Intent intent = getIntent();
         String message = intent.getStringExtra(MainActivity.MESSAGE_ID);
-        String key = intent.getStringExtra(MainActivity.KET_ID);
+        String key = AccountAuthorizations.getInstance().getIftttKey();
 
         showText(message);
-        send2IFTTT(key, message);
+        send2Ifttt(key, message);
 
     }
 
@@ -39,8 +39,7 @@ public class DisplayText extends AppCompatActivity {
 
     }
 
-    public void send2IFTTT(String key, String msg) {
-        RequestQueue queue = Volley.newRequestQueue(this);
+    public void send2Ifttt(String key, String msg) {
         String action = "turn_" + msg + "_test";
         String action1 = "slack_test";
         String url = "https://maker.ifttt.com/trigger/" + action + "/with/key/" + key;
@@ -53,7 +52,7 @@ public class DisplayText extends AppCompatActivity {
             System.err.println(e.getMessage());
         }
 
-        JsonObjectRequest stringRequest = new JsonObjectRequest(
+        JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST, url, data,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -67,6 +66,6 @@ public class DisplayText extends AppCompatActivity {
                 }
         );
 
-        queue.add(stringRequest);
+        Volley.newRequestQueue(this).add(request);
     }
 }

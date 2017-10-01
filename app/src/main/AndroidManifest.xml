@@ -19,7 +19,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DisplayText"></activity>
+        <activity android:name=".DisplayText" />
+        <activity android:name=".NestLogin" />
+        <activity android:name=".IFTTTLogin"></activity>
     </application>
 
 </manifest>
