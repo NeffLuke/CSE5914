@@ -30,13 +30,25 @@ public class MainActivity extends AppCompatActivity {
         final NaturalLanguageClassifier service = new NaturalLanguageClassifier();
         service.setUsernameAndPassword("a475cc56-93c6-4b1c-9cc5-f76d8af50830", "rFlhaBf2aEtS");
         String inputString = commandText.getText().toString();
-        final ServiceCall<Classification> classification = service.classify("6a2a04x217-nlc-28653", inputString);
+        final ServiceCall<Classification> classification = service.classify("bfad19x228-nlc-31622", inputString);
         final String key = AccountAuthorizations.getInstance().getIftttKey();
 
         new Thread() {
             @Override
             public void run() {
                 String msg = classification.execute().getClasses().get(0).getName();
+                ServiceCall<Classification> classification2 = service.classify("6a2a04x217-nlc-28653", " ");
+                if(msg.equals("lifx"))
+                {
+                    String inputString = commandText.getText().toString();
+                    classification2 = service.classify("6a2a04x217-nlc-28653", inputString);
+
+                }
+                else if(msg.equals("nest"))
+                {
+
+                }
+                msg = classification2.execute().getClasses().get(0).getName();
                 intent.putExtra(MESSAGE_ID, msg);
                 startActivity(intent);
             }
