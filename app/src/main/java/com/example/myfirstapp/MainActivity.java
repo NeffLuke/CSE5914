@@ -15,14 +15,12 @@ public class MainActivity extends AppCompatActivity {
     public static final String MESSAGE_ID = "com.example.myfirstapp.MESSAGE";
     public EditText commandText;
     public EditText actionText;
-    public EditText keyText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         commandText = (EditText) findViewById(R.id.commandField);
-        keyText = (EditText) findViewById(R.id.keyField);
     }
 
     /** Called when the user taps the send button */
@@ -33,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         service.setUsernameAndPassword("a475cc56-93c6-4b1c-9cc5-f76d8af50830", "rFlhaBf2aEtS");
         String inputString = commandText.getText().toString();
         final ServiceCall<Classification> classification = service.classify("6a2a04x217-nlc-28653", inputString);
-        final String key = keyText.getText().toString();
+        final String key = AccountAuthorizations.getInstance().getIftttKey();
 
         new Thread() {
             @Override
