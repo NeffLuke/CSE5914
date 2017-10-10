@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         commandText.setText("");
 
     }
-
+//curl -i --user "{username}":"{password}" -F training_data=@{path_to_file}/weather_data_train.csv -F training_metadata="{\"language\":\"en\",\"name\":\"TutorialClassifier\"}" "https://gateway.watsonplatform.net/natural-language-classifier/api/v1/classifiers"
     /** Called when the user taps the send button */
 
     public void sendTrigger(View view) {
@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
                     } else if (msg.equals("nest")) {
                         //change classifier id
+                        classification2 = service.classify("ebd2f7x230-nlc-22389", inputString);
                     }
 
 
