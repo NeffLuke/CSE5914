@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
                     } else if (msg.equals("nest")) {
                         //change classifier id
-                        classification2 = service.classify("ebd2f7x230-nlc-22389", inputString);
+                        classification2 = service.classify("ebd2f7x230-nlc-53763", inputString);
                     }
 
 
