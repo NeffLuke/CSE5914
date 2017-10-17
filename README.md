@@ -19,3 +19,5 @@ curl -G -u "a475cc56-93c6-4b1c-9cc5-f76d8af50830":"rFlhaBf2aEtS" "https://gatewa
 
 NLC MASTER CLASSIFIER:
 "bfad19x228-nlc-31622"
+NEST CLASSIFIER:
+"ebd2f7x230-nlc-53763"
