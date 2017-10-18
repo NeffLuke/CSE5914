@@ -1,13 +1,12 @@
-package com.example.myfirstapp;
+package com.example.myfirstapp.logins;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.EditText;
+
+import com.example.myfirstapp.R;
+import com.example.myfirstapp.services.IFTTTService;
 
 public class IFTTTLogin extends AppCompatActivity {
 
@@ -24,11 +23,8 @@ public class IFTTTLogin extends AppCompatActivity {
     }
 
     public void connectWithKey(View view) {
-        AccountAuthorizations
-                .getInstance()
-                .setIftttKey(
-                        keyField.getText().toString()
-                );
+        String key = keyField.getText().toString();
+        IFTTTService.getInstance().setIftttKey(key);
         finish();
     }
 }
