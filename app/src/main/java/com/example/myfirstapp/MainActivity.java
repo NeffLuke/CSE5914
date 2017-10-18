@@ -6,16 +6,24 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
+import com.example.myfirstapp.logins.IFTTTLogin;
+import com.example.myfirstapp.logins.NestLogin;
+import com.example.myfirstapp.services.IFTTTService;
+import com.example.myfirstapp.services.NestService;
+import com.example.myfirstapp.services.Service;
 import com.ibm.watson.developer_cloud.http.ServiceCall;
 import com.ibm.watson.developer_cloud.natural_language_classifier.v1.NaturalLanguageClassifier;
 import com.ibm.watson.developer_cloud.natural_language_classifier.v1.model.Classification;
-import 	android.support.design.widget.Snackbar;
+import android.support.design.widget.Snackbar;
+
 public class MainActivity extends AppCompatActivity {
 
     public static final String MESSAGE_ID = "com.example.myfirstapp.MESSAGE";
-    public EditText commandText;
-    public EditText actionText;
-    public String msg ="";
+    private String serviceClassifierID = "bfad19x228-nlc-31622";
+
+    private EditText commandText;
+    private EditText actionText;
+    private NaturalLanguageClassifier service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,56 +32,56 @@ public class MainActivity extends AppCompatActivity {
         commandText = (EditText) findViewById(R.id.commandField);
         commandText.setText("");
 
+        service = new NaturalLanguageClassifier();
+        service.setUsernameAndPassword("a475cc56-93c6-4b1c-9cc5-f76d8af50830", "rFlhaBf2aEtS");
+        IFTTTService.getInstance()
+                .setNlcService(service)
+                .setCommandClassifierID("6a2a04x217-nlc-28653");
+        NestService.getInstance()
+                .setNlcService(service)
+                .setCommandClassifierID("ebd2f7x230-nlc-22389");
+
     }
 //curl -i --user "{username}":"{password}" -F training_data=@{path_to_file}/weather_data_train.csv -F training_metadata="{\"language\":\"en\",\"name\":\"TutorialClassifier\"}" "https://gateway.watsonplatform.net/natural-language-classifier/api/v1/classifiers"
     /** Called when the user taps the send button */
 
-    public void sendTrigger(View view) {
+    public void sendTrigger(final View view) {
 
-        final Snackbar mySnackbar = Snackbar.make(view, "Error: Please connect to services", 1000);
-        final Snackbar noString= Snackbar.make(view, "Please input a string", 1000);
-        final Intent intent = new Intent(this, DisplayText.class);
-        final NaturalLanguageClassifier service = new NaturalLanguageClassifier();
-        service.setUsernameAndPassword("a475cc56-93c6-4b1c-9cc5-f76d8af50830", "rFlhaBf2aEtS");
-        String inputString = commandText.getText().toString();
+        final String command = commandText.getText().toString();
 
-
-        if(inputString.trim().length()== 0)
-        {
-            noString.show();
+        if (command.trim().length() == 0) {
+            Snackbar.make(view, "Please enter a command", 1000).show();
+            return;
         }
-        else {
-            final ServiceCall<Classification> classification = service.classify("bfad19x228-nlc-31622", inputString);
-            final String key = AccountAuthorizations.getInstance().getIftttKey();
 
-            new Thread() {
-                @Override
-                public void run() {
-                    String msg = classification.execute().getClasses().get(0).getName();
-                    String inputString = commandText.getText().toString();
-                    ServiceCall<Classification> classification2 = service.classify("6a2a04x217-nlc-28653", inputString);
-                    if (msg.equals("lifx") && key != null) {
-                        //change classifier id
+        final ServiceCall<Classification> serviceClassification = service.classify(serviceClassifierID, command);
 
-                    } else if (key == null) {
+        new Thread() {
+            @Override
+            public void run() {
+                String serviceClass = serviceClassification.execute().getTopClass();
+                ServiceCall<Classification> commandClassification;
 
-                    } else if (msg.equals("nest")) {
-                        //change classifier id
-                        classification2 = service.classify("ebd2f7x230-nlc-22389", inputString);
-                    }
+                Service service;
 
-
-                    if (key != null) {
-                        msg = classification2.execute().getClasses().get(0).getName();
-
-                        intent.putExtra(MESSAGE_ID, msg);
-                        startActivity(intent);
-                    } else {
-                        mySnackbar.show();
-                    }
+                switch (serviceClass) {
+                    case "lifx":
+                        service = IFTTTService.getInstance();
+                        break;
+                    case "nest":
+                        service = NestService.getInstance();
+                        break;
+                    default:
+                        return;
                 }
-            }.start();
-        }
+
+                int errCode = service.executeCommand(command, MainActivity.this);
+                if (errCode != 0) {
+                    Snackbar.make(view, service.getErrorMessage(errCode), 1000).show();
+                }
+            }
+        }.start();
+
     }
 
     public void nestLogin(View view) {
