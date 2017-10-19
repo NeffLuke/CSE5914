@@ -34,7 +34,7 @@ public class DiscoveryService {
                 .environmentId(environment_id)
                 .collectionId(collection_id)
                 .passages(passageOption)
-                .naturalLanguageQuery("target")
+                .naturalLanguageQuery(target)
                 .build();
 
         QueryResponse result = discovery.query(queryOption).execute();

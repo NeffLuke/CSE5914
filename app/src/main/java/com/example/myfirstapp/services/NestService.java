@@ -262,3 +262,4 @@ public class NestService extends Service {
         });
     }
 }
+//activity.startActivity(newIntent(activity, IFTTTLogin.class));
