@@ -1,5 +1,6 @@
 package com.example.myfirstapp.services;
 
+import android.app.Activity;
 import android.content.Context;
 
 import com.ibm.watson.developer_cloud.http.ServiceCallback;
@@ -31,7 +32,7 @@ public abstract class Service {
         return this;
     }
 
-    public Service execute(final String command, final ExecCallback callback) {
+    public Service execute(final String command, final Activity activity, final ExecCallback callback) {
         System.out.println("EXECUTING");
         nlcService.classify(commandClassifierID, command)
                 .enqueue(new ServiceCallback<Classification>() {
@@ -39,7 +40,7 @@ public abstract class Service {
                     public void onResponse(Classification response) {
                         String cls = response.getTopClass();
                         System.out.println("SERVICE CLASSIFIER RESPONSE: " + cls);
-                        handleClassifierResponse(command, cls, callback);
+                        handleClassifierResponse(command, cls, activity, callback);
                     }
 
                     @Override
@@ -51,6 +52,6 @@ public abstract class Service {
         return this;
     }
 
-    protected abstract void handleClassifierResponse(String cmd, String cls, ExecCallback callback);
+    protected abstract void handleClassifierResponse(String cmd, String cls, Activity activity, ExecCallback callback);
 
 }

@@ -1,5 +1,7 @@
 package com.example.myfirstapp.services;
 
+import android.app.Activity;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,17 +49,17 @@ public class NestService extends Service {
     }
 
     @Override
-    public Service execute(String command, ExecCallback callback) {
+    public Service execute(String command, Activity activity, ExecCallback callback) {
         if (nestAuthCode == null) {
             callback.onFailure(new Exception("Please login to your Nest account"));
         } else {
-            super.execute(command, callback);
+            super.execute(command, activity, callback);
         }
         return this;
     }
 
     @Override
-    protected void handleClassifierResponse(String cmd, String cls, ExecCallback callback) {
+    protected void handleClassifierResponse(String cmd, String cls, Activity activity, ExecCallback callback) {
         switch (cls) {
             case "heat":
                 break;

@@ -1,5 +1,6 @@
 package com.example.myfirstapp.services;
 
+import android.app.Activity;
 import android.content.Context;
 
 import org.json.JSONException;
@@ -35,17 +36,17 @@ public class IFTTTService extends Service {
     }
 
     @Override
-    public Service execute(String command, ExecCallback callback) {
+    public Service execute(String command, Activity activity, ExecCallback callback) {
         if (iftttKey == null) {
             callback.onFailure(new Exception("Please connect to IFTTT services"));
         } else {
-            super.execute(command, callback);
+            super.execute(command, activity, callback);
         }
         return this;
     }
 
     @Override
-    protected void handleClassifierResponse(String cmd, String cls, ExecCallback callback) {
+    protected void handleClassifierResponse(String cmd, String cls, Activity activity, ExecCallback callback) {
         switch (cls) {
             case "on":
                 sendAction(cls);

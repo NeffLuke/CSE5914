@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
             Snackbar.make(view, "Please enter a command", 1000).show();
             return;
         }
-        RootService.getInstance().execute(command, new Service.ExecCallback() {
+        RootService.getInstance().execute(command, this, new Service.ExecCallback() {
             @Override
             public void onResponse(String message) {
 
