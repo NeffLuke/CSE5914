@@ -31,7 +31,7 @@ public class NestLogin extends AppCompatActivity {
 
     public void connectWithPin(View view) {
         final String pin = pinField.getText().toString();
-        NestService.getInstance().authorizeWithPin(pin, this);
+        NestService.getInstance().authorizeWithPin(pin);
         finish();
     }
 }

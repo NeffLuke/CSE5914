@@ -1,14 +1,22 @@
 package com.example.myfirstapp.services;
 
+import android.app.Activity;
 import android.content.Context;
 
+import com.ibm.watson.developer_cloud.http.ServiceCallback;
 import com.ibm.watson.developer_cloud.natural_language_classifier.v1.NaturalLanguageClassifier;
+import com.ibm.watson.developer_cloud.natural_language_classifier.v1.model.Classification;
 
 /**
  * Created by simonrouse9461 on 10/17/17.
  */
 
 public abstract class Service {
+
+    public interface ExecCallback {
+        void onResponse(String message);
+        void onFailure(Exception e);
+    }
 
     private NaturalLanguageClassifier nlcService;
 
@@ -24,18 +32,26 @@ public abstract class Service {
         return this;
     }
 
-    protected final String getCommandClass(String command) {
-        String cls = nlcService
-                .classify(commandClassifierID, command)
-                .execute()
-                .getTopClass();
+    public Service execute(final String command, final Activity activity, final ExecCallback callback) {
+        System.out.println("EXECUTING");
+        nlcService.classify(commandClassifierID, command)
+                .enqueue(new ServiceCallback<Classification>() {
+                    @Override
+                    public void onResponse(Classification response) {
+                        String cls = response.getTopClass();
+                        System.out.println("SERVICE CLASSIFIER RESPONSE: " + cls);
+                        handleClassifierResponse(command, cls, activity, callback);
+                    }
 
-        System.out.println("SERVICE CLASSIFIER RESPONSE: " + cls);
-        return cls;
+                    @Override
+                    public void onFailure(Exception e) {
+                        callback.onFailure(e);
+                    }
+                });
+
+        return this;
     }
 
-    public abstract int executeCommand(String command, Context context);
-
-    public abstract String getErrorMessage(int errCode);
+    protected abstract void handleClassifierResponse(String cmd, String cls, Activity activity, ExecCallback callback);
 
 }
