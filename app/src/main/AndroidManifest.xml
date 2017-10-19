@@ -20,7 +20,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".logins.NestLogin" />
-        <activity android:name=".IFTTTLogin"></activity>
+        <activity android:name=".IFTTTLogin" />
+        <activity android:name=".DiscoveryActivity"></activity>
     </application>
 
 </manifest>

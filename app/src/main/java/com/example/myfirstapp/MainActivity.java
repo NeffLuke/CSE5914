@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
+import com.example.myfirstapp.discovery.DiscoveryService;
 import com.example.myfirstapp.logins.IFTTTLogin;
 import com.example.myfirstapp.logins.NestLogin;
 import com.example.myfirstapp.services.IFTTTService;
@@ -28,12 +29,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         commandText = (EditText) findViewById(R.id.commandField);
         commandText.setText("");
+        DiscoveryService search = new DiscoveryService();
 
         service = new NaturalLanguageClassifier();
         service.setUsernameAndPassword("a475cc56-93c6-4b1c-9cc5-f76d8af50830", "rFlhaBf2aEtS");
         RootService.getInstance()
                 .setNlcService(service)
-                .setCommandClassifierID("bfad19x228-nlc-31622");
+                .setCommandClassifierID("ebd15ex229-nlc-62507");
         IFTTTService.getInstance()
                 .setNlcService(service)
                 .setCommandClassifierID("6a2a04x217-nlc-28653");
@@ -73,6 +75,18 @@ public class MainActivity extends AppCompatActivity {
 
     public void iftttLogin(View view) {
         startActivity(new Intent(this, IFTTTLogin.class));
+    }
+    public void discoverySearch(View view){
+
+        final String command = commandText.getText().toString();
+
+        startActivity(new Intent(this, DiscoveryActivity.class));
+
+
+
+
+
+
     }
 }
 
