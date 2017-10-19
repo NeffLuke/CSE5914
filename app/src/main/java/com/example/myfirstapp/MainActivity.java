@@ -10,12 +10,15 @@ import com.ibm.watson.developer_cloud.http.ServiceCall;
 import com.ibm.watson.developer_cloud.natural_language_classifier.v1.NaturalLanguageClassifier;
 import com.ibm.watson.developer_cloud.natural_language_classifier.v1.model.Classification;
 import 	android.support.design.widget.Snackbar;
+
+
 public class MainActivity extends AppCompatActivity {
 
     public static final String MESSAGE_ID = "com.example.myfirstapp.MESSAGE";
     public EditText commandText;
     public EditText actionText;
     public String msg ="";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
