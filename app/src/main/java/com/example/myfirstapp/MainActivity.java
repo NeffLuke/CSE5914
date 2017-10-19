@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                         return;
                 }
 
-                int errCode = service.executeCommand(command, MainActivity.this);
+                int errCode = service.executeCommand(command);
                 if (errCode != 0) {
                     Snackbar.make(view, service.getErrorMessage(errCode), 1000).show();
                 }

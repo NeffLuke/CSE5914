@@ -34,7 +34,7 @@ public abstract class Service {
         return cls;
     }
 
-    public abstract int executeCommand(String command, Context context);
+    public abstract int executeCommand(String command);
 
     public abstract String getErrorMessage(int errCode);
 

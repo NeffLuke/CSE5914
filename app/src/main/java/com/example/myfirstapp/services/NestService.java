@@ -2,20 +2,24 @@ package com.example.myfirstapp.services;
 
 import android.content.Context;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Exchanger;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by simonrouse9461 on 10/17/17.
@@ -47,7 +51,7 @@ public class NestService extends Service {
         return NEST_AUTHORIZATION_URL;
     }
 
-    public int executeCommand(String command, Context context) {
+    public int executeCommand(String command) {
         if (nestAuthCode == null) {
             return 1;
         }
@@ -60,8 +64,10 @@ public class NestService extends Service {
             case "cool":
                 break;
             case "heat mode":
+                setHVACMode(null, "heat");
                 break;
             case "cool mode":
+                setHVACMode(null, "cool");
                 break;
             case "heat and cool":
                 break;
@@ -88,131 +94,114 @@ public class NestService extends Service {
         }
     }
 
-    public void authorizeWithPin(final String pin, final Context context) {
-        StringRequest request = new StringRequest(
-                Request.Method.POST, NestService.NEST_OAUTH_URL,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject obj = new JSONObject(response);
-                            nestAuthCode = obj.get("access_token").toString();
-                            fetchThermostatIDs(context);
-                        } catch (JSONException e) {
-                            System.err.println(e.getMessage());
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        System.err.println(error.getMessage());
-                    }
+    public void authorizeWithPin(final String pin) {
+        OkHttpClient client = new OkHttpClient()
+                .newBuilder()
+                .build();
+
+        Request request = new Request.Builder()
+                .post(new FormBody.Builder()
+                        .add("client_id", NEST_PRODUCT_ID)
+                        .add("client_secret", NEST_PRODUCT_SECRET)
+                        .add("grant_type", "authorization_code")
+                        .add("code", pin)
+                        .build())
+                .url(NEST_OAUTH_URL)
+                .build();
+
+        client.newCall(request)
+                .enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                System.err.println(e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    JSONObject obj = new JSONObject(response.body().string());
+                    nestAuthCode = obj.get("access_token").toString();
+                    fetchThermostatIDs(null);
+                } catch (JSONException e) {
+                    System.err.println(e.getMessage());
                 }
-        ) {
-            @Override
-            public String getBodyContentType() {
-                return "application/x-www-form-urlencoded";
             }
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("client_id", NestService.NEST_PRODUCT_ID);
-                params.put("client_secret", NestService.NEST_PRODUCT_SECRET);
-                params.put("grant_type", "authorization_code");
-                params.put("code", pin);
-
-                return params;
-            }
-        };
-
-        Volley.newRequestQueue(context).add(request);
+        });
     }
 
-    private void fetchThermostatIDs(Context context) {
-        StringRequest request = new StringRequest(
-                Request.Method.GET, NEST_API_URL + "/devices/thermostats",
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject obj = new JSONObject(response);
-                            nestThermostatIDs.clear();
-                            nestThermostatIDs.add(obj.keys().next());
-                            System.out.println("NEST THERMOSTAT ID: " + nestThermostatIDs.get(0));
-                        } catch (JSONException e) {
-                            System.err.println(e.getMessage());
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        System.err.print("ERROR:");
-                        System.err.println(new String(error.networkResponse.data));
+    private void fetchThermostatIDs(final String url) {
+        OkHttpClient client = new OkHttpClient()
+                .newBuilder()
+                .followRedirects(false)
+                .followSslRedirects(false)
+                .build();
+        Request request = new Request.Builder()
+                .url(url == null ? NEST_API_URL + "/devices/thermostats" : url)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Authorization", "Bearer " + nestAuthCode)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                System.err.println("ERROR FETCHING");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isRedirect()) {
+                    System.err.println("REDIRECTED");
+                    String redirectUrl = response.header("Location");
+                    fetchThermostatIDs(redirectUrl);
+                } else {
+                    try {
+                        JSONObject obj = new JSONObject(response.body().string());
+                        nestThermostatIDs.clear();
+                        nestThermostatIDs.add(obj.keys().next());
+                        System.out.println("NEST THERMOSTAT ID: " + nestThermostatIDs.get(0));
+                    } catch (JSONException e) {
+                        System.err.println(e.getMessage());
                     }
                 }
-        ) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                headers.put("Authorization", "Bearer " + nestAuthCode);
-                return headers;
             }
-        };
+        });
+    }
 
+    private void setHVACMode(String url, final String mode) {
         try {
-            System.out.println(request.getHeaders());
-        } catch (AuthFailureError e) {
+            OkHttpClient client = new OkHttpClient()
+                    .newBuilder()
+                    .followRedirects(false)
+                    .followSslRedirects(false)
+                    .build();
 
-        }
+            Request request = new Request.Builder()
+                    .put(RequestBody.create(MediaType.parse("application/json"), new JSONObject()
+                            .put("hvac_mode", mode)
+                            .toString()))
+                    .url(url == null ? NEST_API_URL + "/devices/thermostats/" + nestThermostatIDs.get(0) : url)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Authorization", "Bearer " + nestAuthCode)
+                    .build();
 
-        Volley.newRequestQueue(context).add(request);
-    }
-/*
-    private void setHVACMode(String mode, Context context) {
-        StringRequest request = new StringRequest(
-                Request.Method.PUT, NEST_API_URL,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject obj = new JSONObject(response);
-                            NestService.getInstance()
-                                    .setNestAuthCode(
-                                            obj.get("access_token").toString()
-                                    );
-                        } catch (JSONException e) {
-                            System.err.println(e.getMessage());
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        System.err.println(error.getMessage());
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    System.err.println(e.getMessage());
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isRedirect()) {
+                        System.err.println("REDIRECTED");
+                        String redirectUrl = response.header("Location");
+                        setHVACMode(redirectUrl, mode);
                     }
                 }
-        ) {
-            @Override
-            public String getBodyContentType() {
-                return "application/x-www-form-urlencoded";
-            }
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("client_id", productId);
-                params.put("client_secret", productSecret);
-                params.put("grant_type", "authorization_code");
-                params.put("code", pin);
-
-                return params;
-            }
-        };
-
-        Volley.newRequestQueue(context).add(request);
+            });
+        } catch (JSONException e) {
+            System.err.println(e.getMessage());
+        }
     }
-    */
 
 }
