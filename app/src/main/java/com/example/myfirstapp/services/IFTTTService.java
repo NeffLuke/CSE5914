@@ -34,11 +34,18 @@ public class IFTTTService extends Service {
         this.iftttKey = key;
     }
 
-    public int executeCommand(String command) {
-        if (iftttKey == null) return 1;
+    @Override
+    public Service execute(String command, ExecCallback callback) {
+        if (iftttKey == null) {
+            callback.onFailure(new Exception("Please connect to IFTTT services"));
+        } else {
+            super.execute(command, callback);
+        }
+        return this;
+    }
 
-        String cls = getCommandClass(command);
-
+    @Override
+    protected void handleClassifierResponse(String cmd, String cls, ExecCallback callback) {
         switch (cls) {
             case "on":
                 sendAction(cls);
@@ -48,18 +55,6 @@ public class IFTTTService extends Service {
                 break;
             default:
                 break;
-        }
-        return 0;
-    }
-
-    public String getErrorMessage(int errCode) {
-        switch (errCode) {
-            case 0:
-                return "";
-            case 1:
-                return "Please connect to IFTTT services";
-            default:
-                return "Unknown error";
         }
     }
 

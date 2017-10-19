@@ -1,16 +1,11 @@
 package com.example.myfirstapp.services;
 
-import android.content.Context;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Exchanger;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -51,13 +46,18 @@ public class NestService extends Service {
         return NEST_AUTHORIZATION_URL;
     }
 
-    public int executeCommand(String command) {
+    @Override
+    public Service execute(String command, ExecCallback callback) {
         if (nestAuthCode == null) {
-            return 1;
+            callback.onFailure(new Exception("Please login to your Nest account"));
+        } else {
+            super.execute(command, callback);
         }
+        return this;
+    }
 
-        String cls = getCommandClass(command);
-
+    @Override
+    protected void handleClassifierResponse(String cmd, String cls, ExecCallback callback) {
         switch (cls) {
             case "heat":
                 break;
@@ -79,18 +79,6 @@ public class NestService extends Service {
                 break;
             default:
                 break;
-        }
-        return 0;
-    }
-
-    public String getErrorMessage(int errCode) {
-        switch (errCode) {
-            case 0:
-                return "";
-            case 1:
-                return "Please login to your Nest account";
-            default:
-                return "Unknown error";
         }
     }
 

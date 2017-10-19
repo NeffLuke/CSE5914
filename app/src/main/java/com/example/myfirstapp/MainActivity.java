@@ -10,6 +10,7 @@ import com.example.myfirstapp.logins.IFTTTLogin;
 import com.example.myfirstapp.logins.NestLogin;
 import com.example.myfirstapp.services.IFTTTService;
 import com.example.myfirstapp.services.NestService;
+import com.example.myfirstapp.services.RootService;
 import com.example.myfirstapp.services.Service;
 import com.ibm.watson.developer_cloud.http.ServiceCall;
 import com.ibm.watson.developer_cloud.natural_language_classifier.v1.NaturalLanguageClassifier;
@@ -18,11 +19,7 @@ import android.support.design.widget.Snackbar;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String MESSAGE_ID = "com.example.myfirstapp.MESSAGE";
-    private String serviceClassifierID = "bfad19x228-nlc-31622";
-
     private EditText commandText;
-    private EditText actionText;
     private NaturalLanguageClassifier service;
 
     @Override
@@ -34,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
 
         service = new NaturalLanguageClassifier();
         service.setUsernameAndPassword("a475cc56-93c6-4b1c-9cc5-f76d8af50830", "rFlhaBf2aEtS");
+        RootService.getInstance()
+                .setNlcService(service)
+                .setCommandClassifierID("bfad19x228-nlc-31622");
         IFTTTService.getInstance()
                 .setNlcService(service)
                 .setCommandClassifierID("6a2a04x217-nlc-28653");
@@ -53,33 +53,17 @@ public class MainActivity extends AppCompatActivity {
             Snackbar.make(view, "Please enter a command", 1000).show();
             return;
         }
-        final ServiceCall<Classification> serviceClassification = service.classify(serviceClassifierID, command);
-
-        new Thread() {
+        RootService.getInstance().execute(command, new Service.ExecCallback() {
             @Override
-            public void run() {
-                String serviceClass = serviceClassification.execute().getTopClass();
-                ServiceCall<Classification> commandClassification;
+            public void onResponse(String message) {
 
-                Service service;
-
-                switch (serviceClass) {
-                    case "lifx":
-                        service = IFTTTService.getInstance();
-                        break;
-                    case "nest":
-                        service = NestService.getInstance();
-                        break;
-                    default:
-                        return;
-                }
-
-                int errCode = service.executeCommand(command);
-                if (errCode != 0) {
-                    Snackbar.make(view, service.getErrorMessage(errCode), 1000).show();
-                }
             }
-        }.start();
+
+            @Override
+            public void onFailure(Exception e) {
+                Snackbar.make(view, e.getMessage(), 1000).show();
+            }
+        });
 
     }
 
