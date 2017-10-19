@@ -1,22 +1,11 @@
-package com.example.myfirstapp.Discovery;
-
-import android.support.v7.util.SortedList;
+package com.example.myfirstapp.discovery;
 
 import com.ibm.watson.developer_cloud.discovery.v1.Discovery;
 import com.ibm.watson.developer_cloud.discovery.v1.model.QueryOptions;
 import com.ibm.watson.developer_cloud.discovery.v1.model.QueryPassages;
 import com.ibm.watson.developer_cloud.discovery.v1.model.QueryResponse;
-import com.ibm.watson.developer_cloud.http.RequestBuilder;
-import com.ibm.watson.developer_cloud.http.ServiceCall;
-import com.ibm.watson.developer_cloud.service.WatsonService;
-import com.ibm.watson.developer_cloud.util.ResponseConverterUtils;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
 
 /**
  * Created by williamHoo on 10/18/17.
