@@ -10,10 +10,16 @@ public class DiscoveryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_discovery);
         textView = (TextView)findViewById(R.id.textView2);
 
-        setContentView(R.layout.activity_discovery);
+
         String myStr = getIntent().getStringExtra("response");
-        textView.setText(myStr);
+        if(textView!=null)
+            System.err.print("null");
+        if(myStr!=null)
+            textView.setText(myStr);
+        else
+            textView.setText("NULL");
     }
 }
