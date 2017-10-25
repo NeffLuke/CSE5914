@@ -124,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
                     RecognizerIntent.EXTRA_RESULTS);
             String spokenText = results.get(0);
             // Do something with spokenText
+            commandText.setText(spokenText);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
