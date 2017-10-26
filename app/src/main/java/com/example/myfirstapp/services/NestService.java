@@ -30,7 +30,8 @@ public class NestService extends Service {
     private static final String NEST_API_URL = "https://developer-api.nest.com";
     private static final String NEST_AUTHORIZATION_URL = "https://home.nest.com/login/oauth2?client_id=" + NEST_PRODUCT_ID + "&state=STATE";
 
-    private String nestAuthCode = null;
+    // the default value is only used for testing, it should be null for demo
+    private String nestAuthCode = "c.gRNFQ66P3tnk4pIuRKvUiaFDqfQZTAoEzTtIQ3Xga6aS5VvLDyAhGoYsdqo5Vk8FHoQCUgbIf3icZFE4vgKiJncDwLJl7GiS5YbibBpp53nPTQs6qlc0balfPoxXf2KRlk7MKVllnYNMTgr3";
     private final List<String> nestThermostatIDs = new ArrayList<>();
 
     private interface JSONCallback {

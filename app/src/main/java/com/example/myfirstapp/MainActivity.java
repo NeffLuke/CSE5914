@@ -29,11 +29,12 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int SPEECH_REQUEST_CODE = 0;
+    private final int REQ_CODE_SPEECH_INPUT = 100;
     private EditText commandText;
     private NaturalLanguageClassifier service;
     private TextView speakButton;
-    private final int REQ_CODE_SPEECH_INPUT = 100;
-    private static final int SPEECH_REQUEST_CODE = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
