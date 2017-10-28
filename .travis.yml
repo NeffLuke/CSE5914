@@ -49,6 +49,8 @@ before_install:
   - chmod +x gradlew
   - ./gradlew dependencies || true
   - touch ~/.android/repositories.cfg
+  - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2"
+  - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2"
   
 
 script:
