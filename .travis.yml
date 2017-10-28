@@ -32,6 +32,8 @@ android:
     - android-sdk-license-.+
     - google-gdk-license-.+
     - '.+'
+  env:
+    - ANDROID_TARGET=android-25 ANDROID_ABI=armeabi-v7a
     
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
