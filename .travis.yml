@@ -25,10 +25,7 @@ android:
     # if you need to run emulator(s) during your tests
     # - sys-img-armeabi-v7a-android-22
     # - sys-img-armeabi-v7a-android-17
- 
- env:
-  matrix:
-    - ANDROID_TARGET=android-25 ANDROID_ABI=armeabi-v7a
+
 
   licenses:
     - android-sdk-preview-license-.+
