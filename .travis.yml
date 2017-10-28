@@ -10,7 +10,7 @@ android:
     - platform-tools
 
     # The BuildTools version used by your project
-    - build-tools-26.0.2
+    - build-tools-25.0.2
 
     # The SDK version used to compile your project
     - android-25
@@ -52,5 +52,10 @@ before_install:
   - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2"
   - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2"
 
+before_script:
+  - echo no | android create avd --force -n test -t android-25 --abi armeabi-v7a
+  - emulator -avd test -no-audio -no-window &
+  - android-wait-for-emulator
+  - adb shell input keyevent 82 &
 script:
 - "./gradlew clean build connectedCheck -PdisablePreDex --stacktrace"
